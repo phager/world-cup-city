@@ -86,9 +86,32 @@ test('searchTeams: case/diacritic-insensitive, exact ranked first', () => {
 
 test('searchTeams covers all 48 teams (qualified + eliminated)', () => {
   assert.equal(teams.length, 48);
-  // a non-qualified team is still findable
-  assert.equal(searchTeams('iran', teams)[0].code, 'IRN');
-  assert.deepEqual(teamStatus('IRN', bracket), { state: 'not_qualified' });
+  // a non-qualified team (group-stage exit) is still findable
+  assert.equal(searchTeams('egypt', teams)[0].code, 'EGY');
+  assert.deepEqual(teamStatus('EGY', bracket), { state: 'not_qualified' });
+  // a seeded team is active
+  assert.deepEqual(teamStatus('MEX', bracket), { state: 'active' });
+});
+
+test('seed has 32 distinct teams, all present in teams.json; Mexico in the Mission, Korea adjacent', () => {
+  const codes = new Set(teams.map(t => t.code));
+  const seeded = Object.values(bracket.seed);
+  assert.equal(new Set(seeded).size, 32);
+  for (const c of seeded) assert.ok(codes.has(c), `${c} in teams.json`);
+  // Mexico's bar is in the Mission
+  const mexBar = bars.find(b => b.id === Object.keys(bracket.seed).find(id => bracket.seed[id] === 'MEX'));
+  assert.equal(mexBar.hood, 'Mission');
+  // South Korea and Mexico bars are Voronoi neighbours (their zones touch)
+  const lats = bars.map(b => b.lat), lngs = bars.map(b => b.lng), pad = 0.025;
+  const bbox = [Math.min(...lngs) - pad, Math.min(...lats) - pad, Math.max(...lngs) + pad, Math.max(...lats) + pad];
+  const cells = voronoiCells(bars, bbox, sf.geometry.coordinates);
+  const idOf = code => Object.keys(bracket.seed).find(id => bracket.seed[id] === code);
+  const idx = id => bars.findIndex(b => b.id === id);
+  const polyKey = g => new Set(JSON.stringify(g.coordinates).match(/-?\d+\.\d+,-?\d+\.\d+/g) || []);
+  const mexPts = polyKey(cells[idx(idOf('MEX'))].geometry);
+  const korPts = polyKey(cells[idx(idOf('KOR'))].geometry);
+  const shared = [...mexPts].some(p => korPts.has(p));
+  assert.ok(shared, 'MEX and KOR cells share an edge (adjacent)');
 });
 
 test('voronoiCells with SF clip: 32 cells, none bleed past the boundary box', () => {
