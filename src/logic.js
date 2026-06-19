@@ -88,6 +88,21 @@ export function barHistory(barId, bracket) {
   return { origin, current: frames[frames.length - 1][barId] || origin, absorbedRound };
 }
 
+// The round a team lost within the first `through` rounds of the given view (projected or
+// real). Returns the round code (e.g. 'R32') or null if they're still alive in that view.
+export function eliminationRound(teamCode, bracket, through = ROUNDS.length, opts = {}) {
+  const { projected = false } = opts;
+  for (let i = 0; i < through; i++) {
+    for (const m of bracket.matches) {
+      if (m.round !== ROUNDS[i]) continue;
+      const w = winnerOf(m, projected);
+      if (!w) continue;
+      if ((m.a === teamCode || m.b === teamCode) && w !== teamCode) return ROUNDS[i];
+    }
+  }
+  return null;
+}
+
 // Ranked team matches: exact > prefix > substring, then alphabetical. Diacritic-insensitive.
 export function searchTeams(query, teams) {
   const q = norm(query);

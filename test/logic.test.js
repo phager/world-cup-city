@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   ROUNDS, computeOwners, mergeFrames, liveThrough, zoneForTeam,
-  teamStatus, searchTeams, voronoiCells, barHistory, winnerOf,
+  teamStatus, searchTeams, voronoiCells, barHistory, winnerOf, eliminationRound,
 } from '../src/logic.js';
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url)));
@@ -73,6 +73,17 @@ test('teamStatus: active / eliminated(round) / not_qualified', () => {
 test('barHistory tells the origin, current owner, and absorption round', () => {
   assert.deepEqual(barHistory('z1', mini), { origin: 'JPN', current: 'FRA', absorbedRound: 'R32' });
   assert.deepEqual(barHistory('z3', mini), { origin: 'FRA', current: 'FRA', absorbedRound: null });
+});
+
+test('eliminationRound: projected view reports the round a team lost; null if still alive', () => {
+  // Projected R32 of the real bracket: GHA beats KOR (pick), so KOR is out in R32.
+  assert.equal(eliminationRound('KOR', bracket, ROUNDS.length, { projected: true }), 'R32');
+  // Champion projection (MEX) is never eliminated.
+  assert.equal(eliminationRound('MEX', bracket, ROUNDS.length, { projected: true }), null);
+  // With no real results, the real (non-projected) view eliminates nobody.
+  assert.equal(eliminationRound('KOR', bracket, ROUNDS.length, { projected: false }), null);
+  // Only count rounds within `through`: before any round is viewed, nobody is out.
+  assert.equal(eliminationRound('KOR', bracket, 0, { projected: true }), null);
 });
 
 test('searchTeams: case/diacritic-insensitive, exact ranked first', () => {

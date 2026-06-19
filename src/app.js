@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {
   ROUNDS, ROUND_LABEL, computeOwners, voronoiCells, zoneForTeam,
-  teamStatus, searchTeams, barHistory, liveThrough,
+  teamStatus, searchTeams, barHistory, liveThrough, eliminationRound,
 } from './logic.js';
 
 // ---- load static data -------------------------------------------------------
@@ -84,7 +84,9 @@ function openBarPopup(barId, layer) {
   const t = teamBy[code];
   const h = barHistory(barId, bracket);
   // Resolve to the actual named venue (coords are approximate, a lat/lng pin can miss the door).
-  const dir = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${b.name}, ${b.address}, San Francisco, CA`)}`;
+  const place = encodeURIComponent(`${b.name}, ${b.address}, San Francisco, CA`);
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${place}`;
+  const listing = `https://www.google.com/maps/search/?api=1&query=${place}`;
   let story = `Home base of <b>${flagName(h.origin)}</b> fans.`;
   if (h.origin !== code) story = `${flagName(h.origin)}'s zone — absorbed by <b>${flagName(code)}</b>` +
     (h.absorbedRound ? ` in the ${ROUND_LABEL[h.absorbedRound]}` : '') + '.';
@@ -94,7 +96,7 @@ function openBarPopup(barId, layer) {
     `<span style="color:${colorOf(code)}">${t?.flag || ''} ${t?.name || code}</span><br>` +
     `<span class="meta">${story}</span><br>` +
     `<a href="${dir}" target="_blank" rel="noopener">Directions</a> · ` +
-    `<a href="${b.url}" target="_blank" rel="noopener">Listing</a></div>`;
+    `<a href="${listing}" target="_blank" rel="noopener">Listing</a></div>`;
   const popup = L.popup({ maxWidth: 240 }).setLatLng([b.lat, b.lng]).setContent(html);
   map.openPopup(popup);
 }
@@ -173,8 +175,11 @@ function showTeam(code, zoom) {
   const st = teamStatus(code, bracket);
   let head;
   if (st.state === 'not_qualified') head = 'Did not reach the Round of 32.';
-  else if (barIds.length === 0) head = `Eliminated in the ${ROUND_LABEL[st.round] || st.round} — zone absorbed.`;
-  else head = `Holds <b>${barIds.length}</b> zone${barIds.length > 1 ? 's' : ''} at this point.`;
+  else if (barIds.length === 0) {
+    // Use the round they lost in the CURRENT view (projected bracket), not real-only status.
+    const lost = eliminationRound(code, bracket, +slider.value, { projected: true }) || st.round;
+    head = lost ? `Eliminated in the ${ROUND_LABEL[lost] || lost} — zone absorbed.` : 'Zone absorbed.';
+  } else head = `Holds <b>${barIds.length}</b> zone${barIds.length > 1 ? 's' : ''} at this point.`;
   const list = barIds.map(id => `<li>${barBy[id].name} <span style="color:var(--muted)">· ${barBy[id].hood}</span></li>`).join('');
   document.getElementById('team-detail').innerHTML =
     `<h3>${t.flag} ${t.name}</h3><div>${head}</div>` + (list ? `<ul>${list}</ul>` : '');
@@ -185,8 +190,11 @@ function showTeam(code, zoom) {
 }
 
 // ---- panel collapse ---------------------------------------------------------
-document.getElementById('panel-toggle').addEventListener('click', () =>
-  document.getElementById('panel').classList.toggle('collapsed'));
+document.getElementById('panel-toggle').addEventListener('click', e => {
+  const collapsed = document.getElementById('panel').classList.toggle('collapsed');
+  e.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+  e.currentTarget.setAttribute('aria-label', collapsed ? 'Expand panel' : 'Collapse panel');
+});
 
 // ---- go ---------------------------------------------------------------------
 buildMatchList();
