@@ -59,7 +59,8 @@ for (const round of ROUNDS) {
 const bracket = {
   rounds: ROUNDS,
   note: 'winner=real result (null=undecided). pick=projection used by the Play preview. ' +
-        'Edit winner as matches finish; if an upset changes who advances, update later a/b too.',
+        'Set a winner and the app re-derives later-round matchups from `ranked`.',
+  ranked, // strength order; lets the app rebuild matchups when results change
   seed,
   matches,
 };

@@ -20,6 +20,39 @@ export function winnerOf(match, projected = false) {
   return projected ? (match.pick || null) : null;
 }
 
+// Recompute every matchup from the bracket tree so that setting a result flows downstream:
+// R32 pairs are ranked[i] vs ranked[n-1-i]; each later match takes the (real-or-projected)
+// winners of its two feeder matches. `pick` is refreshed to the better seed of the actual
+// pair, and a stored `winner` that no longer belongs to the (changed) pair is cleared.
+export function resolveBracket(bracket) {
+  const ranked = bracket.ranked;
+  const rankOf = Object.fromEntries(ranked.map((c, i) => [c, i]));
+  const winnerAt = {};
+  const byRound = Object.fromEntries(ROUNDS.map(r => [r, []]));
+  for (const m of bracket.matches) byRound[m.round]?.push(m);
+  for (const r of ROUNDS) byRound[r].forEach((m, i) => { if (m.winner) winnerAt[`${r}:${i}`] = m.winner; });
+
+  const matches = [];
+  let prev = null;
+  for (let ri = 0; ri < ROUNDS.length; ri++) {
+    const round = ROUNDS[ri];
+    const count = 16 >> ri; // 16, 8, 4, 2, 1
+    const cur = [];
+    for (let i = 0; i < count; i++) {
+      let a, b;
+      if (ri === 0) { a = ranked[i]; b = ranked[ranked.length - 1 - i]; }
+      else { const L = prev.length; a = winnerOf(prev[i], true); b = winnerOf(prev[L - 1 - i], true); }
+      const pick = rankOf[a] <= rankOf[b] ? a : b;
+      let winner = winnerAt[`${round}:${i}`] || null;
+      if (winner !== a && winner !== b) winner = null; // stale after an upstream upset
+      const m = { round, a, b, winner, pick };
+      cur.push(m); matches.push(m);
+    }
+    prev = cur;
+  }
+  return { ...bracket, matches };
+}
+
 // owners: { barId -> teamCode } after applying decided merges through `through` rounds.
 // `through` is a count: 0 = seed (32 zones), 5 = champion (1 zone).
 export function computeOwners(bracket, through = ROUNDS.length, opts = {}) {

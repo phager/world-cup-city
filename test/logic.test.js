@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   ROUNDS, computeOwners, mergeFrames, liveThrough, zoneForTeam,
-  teamStatus, searchTeams, voronoiCells, barHistory, winnerOf, eliminationRound,
+  teamStatus, searchTeams, voronoiCells, barHistory, winnerOf, eliminationRound, resolveBracket,
 } from '../src/logic.js';
 
 const read = p => JSON.parse(readFileSync(new URL(p, import.meta.url)));
@@ -73,6 +73,21 @@ test('teamStatus: active / eliminated(round) / not_qualified', () => {
 test('barHistory tells the origin, current owner, and absorption round', () => {
   assert.deepEqual(barHistory('z1', mini), { origin: 'JPN', current: 'FRA', absorbedRound: 'R32' });
   assert.deepEqual(barHistory('z3', mini), { origin: 'FRA', current: 'FRA', absorbedRound: null });
+});
+
+test('resolveBracket flows a manual result into the later matchups', () => {
+  const b = resolveBracket(structuredClone(bracket));
+  const r16before = b.matches.filter(m => m.round === 'R16')[0];
+  assert.equal(r16before.a, 'MEX'); // projection: MEX advances from R32 match 0
+
+  // Upset: ECU beats MEX in the first R32 match.
+  b.matches.find(m => m.round === 'R32').winner = 'ECU';
+  const b2 = resolveBracket(b);
+  const r16 = b2.matches.filter(m => m.round === 'R16')[0];
+  assert.equal(r16.a, 'ECU');        // ECU now occupies MEX's old slot downstream
+  assert.notEqual(r16.a, 'MEX');
+  // a stale winner that no longer belongs to a re-derived pair is cleared
+  for (const m of b2.matches) if (m.winner) assert.ok(m.winner === m.a || m.winner === m.b);
 });
 
 test('eliminationRound: projected view reports the round a team lost; null if still alive', () => {

@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import {
   ROUNDS, ROUND_LABEL, computeOwners, voronoiCells, zoneForTeam,
-  teamStatus, searchTeams, barHistory, liveThrough, eliminationRound,
+  teamStatus, searchTeams, barHistory, liveThrough, eliminationRound, resolveBracket,
 } from './logic.js';
 
 // ---- load static data -------------------------------------------------------
@@ -9,7 +9,7 @@ const [bars, teams, bracket0, sf] = await Promise.all(
   ['data/bars.json', 'data/teams.json', 'data/bracket.json', 'data/sf-boundary.geojson']
     .map(u => fetch(u).then(r => r.json()))
 );
-let bracket = structuredClone(bracket0);          // mutable working copy (manual results)
+let bracket = resolveBracket(structuredClone(bracket0)); // working copy with derived matchups
 const teamBy = Object.fromEntries(teams.map(t => [t.code, t]));
 const barBy = Object.fromEntries(bars.map(b => [b.id, b]));
 const colorOf = code => (teamBy[code]?.color) || '#888';
@@ -119,7 +119,7 @@ document.getElementById('play').addEventListener('click', e => {
   }, 1400);
 });
 document.getElementById('reset').addEventListener('click', () => {
-  bracket = structuredClone(bracket0);
+  bracket = resolveBracket(structuredClone(bracket0));
   selected = null; document.getElementById('search').value = ''; renderResults('');
   slider.value = String(liveThrough(bracket)); buildMatchList(); render(+slider.value);
 });
@@ -142,6 +142,7 @@ function buildMatchList() {
   box.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
     const i = +btn.dataset.i, w = btn.dataset.w, m = bracket.matches[i];
     m.winner = (m.winner === w) ? null : w;         // toggle
+    bracket = resolveBracket(bracket);              // flow the result into later matchups
     const idx = ROUNDS.indexOf(m.round) + 1;
     if (+slider.value < idx) slider.value = String(idx);
     buildMatchList(); render(+slider.value);

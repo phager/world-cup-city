@@ -8,7 +8,7 @@
   { "id": "b07", "name": "Bourbon & Branch", "hood": "Tenderloin", "lat": 37.7855, "lng": -122.4135, "address": "501 Jones St", "url": "https://www.yelp.com/biz/bourbon-and-branch-san-francisco" },
   { "id": "b08", "name": "City Beer Store", "hood": "SoMa", "lat": 37.7795, "lng": -122.4090, "address": "1148 Mission St", "url": "https://www.yelp.com/biz/city-beer-store-san-francisco" },
   { "id": "b09", "name": "Bloodhound", "hood": "SoMa", "lat": 37.7785, "lng": -122.4080, "address": "1145 Folsom St", "url": "https://www.yelp.com/biz/bloodhound-san-francisco" },
-  { "id": "b10", "name": "Place Pigalle", "hood": "Hayes Valley", "lat": 37.7765, "lng": -122.4240, "address": "520 Hayes St", "url": "https://www.yelp.com/biz/place-pigalle-san-francisco" },
+  { "id": "b10", "name": "The Afterwork Bar", "hood": "Hayes Valley", "lat": 37.7769, "lng": -122.4232, "address": "409 Gough St", "url": "https://www.afterworkbarsf.com/" },
   { "id": "b11", "name": "The Page", "hood": "Lower Haight", "lat": 37.7726, "lng": -122.4305, "address": "298 Divisadero St", "url": "https://www.yelp.com/biz/the-page-san-francisco" },
   { "id": "b12", "name": "Mad Dog in the Fog", "hood": "Lower Haight", "lat": 37.7717, "lng": -122.4316, "address": "530 Haight St", "url": "https://www.yelp.com/biz/mad-dog-in-the-fog-san-francisco" },
   { "id": "b13", "name": "Danny Coyle's", "hood": "Haight", "lat": 37.7710, "lng": -122.4373, "address": "668 Haight St", "url": "https://www.yelp.com/biz/danny-coyles-san-francisco" },

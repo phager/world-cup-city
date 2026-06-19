@@ -43,7 +43,7 @@
   { "code": "COD", "name": "DR Congo", "color": "#4DA6E0", "flag": "🇨🇩" },
   { "code": "POR", "name": "Portugal", "color": "#1E7A33", "flag": "🇵🇹" },
   { "code": "UZB", "name": "Uzbekistan", "color": "#0099B5", "flag": "🇺🇿" },
-  { "code": "ENG", "name": "England", "color": "#CF142B", "flag": "🏴" },
+  { "code": "ENG", "name": "England", "color": "#CF142B", "flag": "🇬🇧" },
   { "code": "GHA", "name": "Ghana", "color": "#E8A200", "flag": "🇬🇭" },
   { "code": "PAN", "name": "Panama", "color": "#005293", "flag": "🇵🇦" },
   { "code": "CRO", "name": "Croatia", "color": "#E4002B", "flag": "🇭🇷" }
