@@ -1,13 +1,15 @@
 // Build data/sf-boundary.geojson: union real SF neighborhoods into one land polygon,
-// simplify (Douglas-Peucker) and de-spike (drop acute pier/inlet tendrils) so the
-// coastline reads cleanly. Run: node scripts/build-boundary.mjs [tolerance] [minAngleDeg]
+// then simplify so the coastline reads cleanly. Uses Douglas-Peucker for a cheap first
+// pass, then Visvalingam-Whyatt (area-based) to a target vertex count — VW removes the
+// smallest-area triangles first, which is exactly the thin pier/breakwater slivers that
+// DP alone keeps (their tips sit far from the coastline chord). Run:
+//   node scripts/build-boundary.mjs [targetPoints]
 // Requires network (fetches the neighborhood source once).
 import polygonClipping from 'polygon-clipping';
 import { writeFileSync } from 'node:fs';
 
 const SRC = 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/san-francisco.geojson';
-const TOL = Number(process.argv[2] ?? 0.0016);     // ~160m
-const MIN_ANGLE = Number(process.argv[3] ?? 35);   // drop spike tips sharper than this
+const TARGET = Number(process.argv[2] ?? 80); // final vertex count
 
 const area = ring => {
   let a = 0;
@@ -33,26 +35,22 @@ function dp(pts, eps) {
   return [pts[0], pts[pts.length - 1]];
 }
 
-// Remove vertices whose interior angle is very acute — these are thin spikes (piers/inlets).
-function despike(ring, minAngleDeg) {
-  const minCos = Math.cos((minAngleDeg * Math.PI) / 180); // angle < minAngle  =>  cos > minCos
-  let pts = ring.slice(0, -1); // open
-  for (let pass = 0; pass < 6; pass++) {
-    const keep = [];
-    let removed = 0;
-    for (let i = 0; i < pts.length; i++) {
-      const a = pts[(i - 1 + pts.length) % pts.length], b = pts[i], c = pts[(i + 1) % pts.length];
-      const v1 = [a[0] - b[0], a[1] - b[1]], v2 = [c[0] - b[0], c[1] - b[1]];
-      const dot = v1[0] * v2[0] + v1[1] * v2[1];
-      const cos = dot / ((Math.hypot(...v1) * Math.hypot(...v2)) || 1);
-      if (cos > minCos) { removed++; continue; } // spike tip — drop b
-      keep.push(b);
+// Visvalingam-Whyatt: repeatedly drop the vertex whose triangle (prev,cur,next) has the
+// least area. On a cyclic ring this melts away thin spikes before it touches real headlands.
+function visvalingam(ring, target) {
+  const tri = (a, b, c) => Math.abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2;
+  let p = ring.slice(0, -1); // open the ring
+  while (p.length > target) {
+    let mi = 0, ma = Infinity;
+    for (let i = 0; i < p.length; i++) {
+      const a = p[(i - 1 + p.length) % p.length], b = p[i], c = p[(i + 1) % p.length];
+      const ar = tri(a, b, c);
+      if (ar < ma) { ma = ar; mi = i; }
     }
-    pts = keep;
-    if (!removed) break;
+    p.splice(mi, 1);
   }
-  pts.push(pts[0]);
-  return pts;
+  p.push(p[0]); // close
+  return p;
 }
 
 const src = await fetch(SRC).then(r => r.json());
@@ -63,7 +61,7 @@ for (let i = 1; i < src.features.length; i++)
 let best = null, bestA = -1;
 for (const poly of merged) { const A = area(poly[0]); if (A > bestA) { bestA = A; best = poly[0]; } }
 
-let ring = despike(dp(best, TOL), MIN_ANGLE);
+let ring = visvalingam(dp(best, 0.0004), TARGET);   // DP thins, VW de-spikes to TARGET pts
 ring = ring.map(([x, y]) => [Math.round(x * 1e5) / 1e5, Math.round(y * 1e5) / 1e5]);
 
 const out = {
@@ -72,4 +70,4 @@ const out = {
   geometry: { type: 'Polygon', coordinates: [ring] },
 };
 writeFileSync(new URL('../data/sf-boundary.geojson', import.meta.url), JSON.stringify(out) + '\n');
-console.log(`tol=${TOL} minAngle=${MIN_ANGLE} -> ${ring.length} pts, ${JSON.stringify(out).length} bytes`);
+console.log(`target=${TARGET} -> ${ring.length} pts, ${JSON.stringify(out).length} bytes`);
