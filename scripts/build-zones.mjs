@@ -25,7 +25,7 @@ import polygonClipping from 'polygon-clipping';
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const OSRM_URL = process.env.OSRM_URL || 'http://localhost:5000';
-const STEP_M = Number(process.env.STEP_M || 150);
+const STEP_M = Number(process.env.STEP_M || 90); // fine enough that closely-spaced bars each win cells
 const MOCK = process.argv.includes('--mock');
 const PROFILE = 'foot'; // walking
 
@@ -141,18 +141,39 @@ function dp(p, eps) {
   return mx > eps ? dp(p.slice(0, mi + 1), eps).slice(0, -1).concat(dp(p.slice(mi), eps)) : [p[0], p[p.length - 1]];
 }
 const toLngLat = r => r.map(([gx, gy]) => xy(gx, gy)); // d3-contour grid coords -> lng/lat
+const round = g => g.map(poly => poly.map(r => r.map(([x, y]) => [Math.round(x * 1e5) / 1e5, Math.round(y * 1e5) / 1e5])));
+const pip = (pt, r) => {
+  let c = false;
+  for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+    const [xi, yi] = r[i], [xj, yj] = r[j];
+    if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < ((xj - xi) * (pt[1] - yi)) / (yj - yi) + xi) c = !c;
+  }
+  return c;
+};
+const contains = (coords, pt) => coords.some(poly => pip(pt, poly[0]));
 
 const features = [];
 for (let k = 0; k < bars.length; k++) {
   const field = Float64Array.from(label, v => (v === k ? 1 : 0));
   const [multi] = contours().size([cols, rows]).thresholds([0.5])(field); // one MultiPolygon
   if (!multi || !multi.coordinates.length) continue;
-  // smooth+simplify each ring, then clip the whole multipolygon to the SF boundary
-  const smoothed = multi.coordinates.map(poly => poly.map(r => dp(chaikin(toLngLat(r)), 0.00012)));
-  const clipped = polygonClipping.intersection(smoothed, sf.geometry.coordinates);
-  if (!clipped.length) continue;
-  const round = g => g.map(poly => poly.map(r => r.map(([x, y]) => [Math.round(x * 1e5) / 1e5, Math.round(y * 1e5) / 1e5])));
-  const coords = round(clipped);
+  const barPt = [bars[k].lng, bars[k].lat];
+  // Smooth aggressively, but back off (less corner-cutting) if it would eject the bar from
+  // its own — often thin — zone. Last resort: raw marching-squares rings, clipped.
+  let coords = null;
+  for (const [iters, tol] of [[2, 0.00012], [1, 0.00008], [0, 0.00004], [0, 0]]) {
+    const rings = multi.coordinates.map(poly => poly.map(r => {
+      let g = toLngLat(r);
+      if (iters) g = chaikin(g, iters);
+      if (tol) g = dp(g, tol);
+      return g;
+    }));
+    const clipped = polygonClipping.intersection(rings, sf.geometry.coordinates);
+    if (!clipped.length) continue;
+    if (!coords) coords = round(clipped);          // keep first valid as fallback
+    if (contains(clipped, barPt)) { coords = round(clipped); break; } // prefer one containing the bar
+  }
+  if (!coords) continue;
   features.push({
     type: 'Feature',
     properties: { id: bars[k].id },

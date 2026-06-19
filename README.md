@@ -82,7 +82,7 @@ Leave `osrm-routed` running.
 **2. Generate the zones** (in another terminal, from the repo root):
 ```bash
 node scripts/build-zones.mjs          # walking; OSRM_URL defaults to http://localhost:5000
-# knobs: STEP_M=120 node scripts/build-zones.mjs   (finer grid = smoother + bigger file)
+# knobs: STEP_M defaults to 90m; smaller = finer/smoother + bigger file, larger = coarser
 # node scripts/build-zones.mjs --mock              (straight-line; pipeline test only, not real)
 ```
 Commit `data/zones.geojson` to ship it. Delete it to revert to Voronoi. Transit/driving can
