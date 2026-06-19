@@ -91,12 +91,11 @@ function openBarPopup(barId, layer) {
   if (h.origin !== code) story = `${flagName(h.origin)}'s zone — absorbed by <b>${flagName(code)}</b>` +
     (h.absorbedRound ? ` in the ${ROUND_LABEL[h.absorbedRound]}` : '') + '.';
   const html =
-    `<div class="popup"><b>${b.name}</b><br>` +
+    `<div class="popup"><b><a href="${listing}" target="_blank" rel="noopener">${b.name}</a></b><br>` +
     `<span class="meta">${b.hood} · ${b.address}</span><br>` +
     `<span style="color:${colorOf(code)}">${t?.flag || ''} ${t?.name || code}</span><br>` +
     `<span class="meta">${story}</span><br>` +
-    `<a href="${dir}" target="_blank" rel="noopener">Directions</a> · ` +
-    `<a href="${listing}" target="_blank" rel="noopener">Listing</a></div>`;
+    `<a href="${dir}" target="_blank" rel="noopener">Directions</a></div>`;
   const popup = L.popup({ maxWidth: 240 }).setLatLng([b.lat, b.lng]).setContent(html);
   map.openPopup(popup);
 }

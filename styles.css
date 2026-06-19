@@ -31,8 +31,8 @@ h1 { font-size: 17px; margin: 0; letter-spacing: 0.2px; }
 h1 .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
 #panel-toggle { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer;
   line-height: 1; transition: transform 0.2s ease; }
-/* Chevron points down when collapsed ("open me"), flips up when expanded ("close me"). */
-#panel:not(.collapsed) #panel-toggle { transform: rotate(180deg); }
+/* Chevron points down when expanded, flips up when collapsed. */
+#panel.collapsed #panel-toggle { transform: rotate(180deg); }
 .blurb { color: var(--muted); font-size: 12.5px; margin: 10px 0 12px; }
 .blurb strong { color: var(--ink); }
 
@@ -81,6 +81,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 .leaflet-popup-content { font: inherit; }
 .popup b { font-size: 14px; }
+.popup b a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .popup .meta { color: #555; font-size: 12px; }
 .popup a { color: #1268c3; }
 
