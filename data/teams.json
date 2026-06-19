@@ -7,7 +7,7 @@
   { "code": "SUI", "name": "Switzerland", "color": "#9E2A2B", "flag": "🇨🇭" },
   { "code": "BIH", "name": "Bosnia and Herzegovina", "color": "#002F6C", "flag": "🇧🇦" },
   { "code": "QAT", "name": "Qatar", "color": "#8A1538", "flag": "🇶🇦" },
-  { "code": "SCO", "name": "Scotland", "color": "#0065BF", "flag": "🏴" },
+  { "code": "SCO", "name": "Scotland", "color": "#0065BF", "flag": "🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
   { "code": "MAR", "name": "Morocco", "color": "#C1272D", "flag": "🇲🇦" },
   { "code": "BRA", "name": "Brazil", "color": "#FFC400", "flag": "🇧🇷" },
   { "code": "HAI", "name": "Haiti", "color": "#00209F", "flag": "🇭🇹" },
