@@ -83,7 +83,8 @@ function openBarPopup(barId, layer) {
   const code = owners[barId];
   const t = teamBy[code];
   const h = barHistory(barId, bracket);
-  const dir = `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}`;
+  // Resolve to the actual named venue (coords are approximate, a lat/lng pin can miss the door).
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${b.name}, ${b.address}, San Francisco, CA`)}`;
   let story = `Home base of <b>${flagName(h.origin)}</b> fans.`;
   if (h.origin !== code) story = `${flagName(h.origin)}'s zone — absorbed by <b>${flagName(code)}</b>` +
     (h.absorbedRound ? ` in the ${ROUND_LABEL[h.absorbedRound]}` : '') + '.';
