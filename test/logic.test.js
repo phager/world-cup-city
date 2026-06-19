@@ -125,6 +125,29 @@ test('seed has 32 distinct teams, all present in teams.json; Mexico in the Missi
   assert.ok(shared, 'MEX and KOR cells share an edge (adjacent)');
 });
 
+test('zones.geojson (when present) has 32 features keyed by bar id, bars in their own zone', () => {
+  let zones;
+  try { zones = read('../data/zones.geojson'); } catch { return; } // skip if not generated
+  assert.equal(zones.features.length, bars.length);
+  const ids = new Set(zones.features.map(f => f.properties.id));
+  for (const b of bars) assert.ok(ids.has(b.id), `${b.id} has a zone`);
+  const pip = (pt, r) => {
+    let c = false;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+      const [xi, yi] = r[i], [xj, yj] = r[j];
+      if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < ((xj - xi) * (pt[1] - yi)) / (yj - yi) + xi) c = !c;
+    }
+    return c;
+  };
+  const inFeat = (pt, f) => f.geometry.type === 'Polygon'
+    ? pip(pt, f.geometry.coordinates[0])
+    : f.geometry.coordinates.some(p => pip(pt, p[0]));
+  for (const b of bars) {
+    const f = zones.features.find(f => f.properties.id === b.id);
+    assert.ok(inFeat([b.lng, b.lat], f), `${b.id} sits inside its own zone`);
+  }
+});
+
 test('voronoiCells with SF clip: 32 cells, none bleed past the boundary box', () => {
   const lats = bars.map(b => b.lat), lngs = bars.map(b => b.lng), pad = 0.025;
   const bbox = [Math.min(...lngs) - pad, Math.min(...lats) - pad,

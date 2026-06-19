@@ -23,11 +23,14 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
   attribution: '&copy; OpenStreetMap &copy; CARTO',
 }).addTo(map);
 
-// ---- one-time Voronoi geometry from the 32 bars -----------------------------
+// ---- zone geometry: prebuilt travel-time zones if present, else straight-line Voronoi ---
 const lats = bars.map(b => b.lat), lngs = bars.map(b => b.lng), pad = 0.025;
 const bbox = [Math.min(...lngs) - pad, Math.min(...lats) - pad,
               Math.max(...lngs) + pad, Math.max(...lats) + pad];
-const cells = voronoiCells(bars, bbox, sf.geometry.coordinates);
+let cells = await fetch('data/zones.geojson')
+  .then(r => (r.ok ? r.json() : null)).then(z => z?.features?.length ? z.features : null)
+  .catch(() => null);
+if (!cells) cells = voronoiCells(bars, bbox, sf.geometry.coordinates);
 
 let owners = {};          // barId -> teamCode  (current view)
 let selected = null;      // highlighted team code

@@ -55,6 +55,39 @@ You can also click **"Set results manually"** in the panel to play out scenarios
 > (sports cafés, restaurants with TVs, plazas, fan zones), swap the entries in `bars.json`
 > and add a `notes` field — the rest of the app is unchanged.
 
+## Travel-time zones (optional, organic boundaries)
+
+By default zones are a straight-line **Voronoi**. You can replace them with **walking
+travel-time** zones (each point belongs to the bar you can walk to fastest → curved,
+network-aware borders) by generating a static `data/zones.geojson`. If that file exists,
+the app loads it instead of computing Voronoi; if not, it falls back automatically.
+
+It's precomputed offline against a local **OSRM** walking server (free, no API keys), so
+runtime cost stays zero.
+
+**1. Run OSRM (foot profile) with Docker Desktop** — a NorCal extract covers SF:
+```bash
+mkdir -p osrm && cd osrm
+curl -L -o norcal.osm.pbf https://download.geofabrik.de/north-america/us/california/norcal-latest.osm.pbf
+IMG=ghcr.io/project-osrm/osrm-backend
+docker run -t -v "${PWD}:/data" $IMG osrm-extract  -p /opt/foot.lua /data/norcal.osm.pbf
+docker run -t -v "${PWD}:/data" $IMG osrm-partition /data/norcal.osrm
+docker run -t -v "${PWD}:/data" $IMG osrm-customize /data/norcal.osrm
+docker run -t -i -p 5000:5000 -v "${PWD}:/data" $IMG \
+  osrm-routed --algorithm mld --max-table-size 100000 /data/norcal.osrm
+```
+The first `osrm-extract` is the slow step (downloads/builds the graph); the rest are quick.
+Leave `osrm-routed` running.
+
+**2. Generate the zones** (in another terminal, from the repo root):
+```bash
+node scripts/build-zones.mjs          # walking; OSRM_URL defaults to http://localhost:5000
+# knobs: STEP_M=120 node scripts/build-zones.mjs   (finer grid = smoother + bigger file)
+# node scripts/build-zones.mjs --mock              (straight-line; pipeline test only, not real)
+```
+Commit `data/zones.geojson` to ship it. Delete it to revert to Voronoi. Transit/driving can
+be added later as alternate layers (swap the OSRM profile).
+
 ## Deploy (free)
 Static files only. Push to GitHub and enable **GitHub Pages** (Settings → Pages → deploy
 from `main`, root). No build, no server, no keys. `node_modules` is gitignored and never
