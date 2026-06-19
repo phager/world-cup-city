@@ -1,0 +1,14 @@
+{
+  "name": "world-cup-city",
+  "version": "1.0.0",
+  "description": "SF World Cup 2026 bar-territory map. Static site, no build.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "serve": "node --eval \"import('node:http').then(async ({default:h})=>{const {readFile}=await import('node:fs/promises');const {extname,join,normalize}=await import('node:path');const T={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'};h.createServer(async(rq,rs)=>{let p=normalize(rq.url.split('?')[0]);if(p==='/')p='/index.html';try{const b=await readFile(join(process.cwd(),p));rs.writeHead(200,{'content-type':T[extname(p)]||'application/octet-stream'});rs.end(b)}catch{rs.writeHead(404);rs.end('404')}}).listen(8080,()=>console.log('http://localhost:8080'))})\""
+  },
+  "devDependencies": {
+    "d3-delaunay": "^6.0.4",
+    "polygon-clipping": "^0.15.7"
+  }
+}

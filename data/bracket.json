@@ -1,0 +1,263 @@
+{
+  "rounds": [
+    "R32",
+    "R16",
+    "QF",
+    "SF",
+    "F"
+  ],
+  "note": "winner=real result (null=undecided). pick=projection used by the Play preview. Edit winner as matches finish; if an upset changes who advances, update later-round a/b too.",
+  "seed": {
+    "b01": "USA",
+    "b02": "SEN",
+    "b03": "CAN",
+    "b04": "BRA",
+    "b05": "ARG",
+    "b06": "FRA",
+    "b07": "ENG",
+    "b08": "ESP",
+    "b09": "GER",
+    "b10": "POR",
+    "b11": "NED",
+    "b12": "ITA",
+    "b13": "BEL",
+    "b14": "CRO",
+    "b15": "URU",
+    "b16": "COL",
+    "b17": "JPN",
+    "b18": "KOR",
+    "b19": "MEX",
+    "b20": "MAR",
+    "b21": "SUI",
+    "b22": "DEN",
+    "b23": "POL",
+    "b24": "SRB",
+    "b25": "GHA",
+    "b26": "CMR",
+    "b27": "ECU",
+    "b28": "AUS",
+    "b29": "NGA",
+    "b30": "EGY",
+    "b31": "SWE",
+    "b32": "WAL"
+  },
+  "matches": [
+    {
+      "round": "R32",
+      "a": "USA",
+      "b": "MEX",
+      "winner": null,
+      "pick": "USA"
+    },
+    {
+      "round": "R32",
+      "a": "CAN",
+      "b": "BRA",
+      "winner": null,
+      "pick": "CAN"
+    },
+    {
+      "round": "R32",
+      "a": "ARG",
+      "b": "FRA",
+      "winner": null,
+      "pick": "ARG"
+    },
+    {
+      "round": "R32",
+      "a": "ENG",
+      "b": "ESP",
+      "winner": null,
+      "pick": "ENG"
+    },
+    {
+      "round": "R32",
+      "a": "GER",
+      "b": "POR",
+      "winner": null,
+      "pick": "GER"
+    },
+    {
+      "round": "R32",
+      "a": "NED",
+      "b": "ITA",
+      "winner": null,
+      "pick": "NED"
+    },
+    {
+      "round": "R32",
+      "a": "BEL",
+      "b": "CRO",
+      "winner": null,
+      "pick": "BEL"
+    },
+    {
+      "round": "R32",
+      "a": "URU",
+      "b": "COL",
+      "winner": null,
+      "pick": "URU"
+    },
+    {
+      "round": "R32",
+      "a": "JPN",
+      "b": "KOR",
+      "winner": null,
+      "pick": "JPN"
+    },
+    {
+      "round": "R32",
+      "a": "SEN",
+      "b": "MAR",
+      "winner": null,
+      "pick": "SEN"
+    },
+    {
+      "round": "R32",
+      "a": "SUI",
+      "b": "DEN",
+      "winner": null,
+      "pick": "SUI"
+    },
+    {
+      "round": "R32",
+      "a": "POL",
+      "b": "SRB",
+      "winner": null,
+      "pick": "POL"
+    },
+    {
+      "round": "R32",
+      "a": "GHA",
+      "b": "CMR",
+      "winner": null,
+      "pick": "GHA"
+    },
+    {
+      "round": "R32",
+      "a": "ECU",
+      "b": "AUS",
+      "winner": null,
+      "pick": "ECU"
+    },
+    {
+      "round": "R32",
+      "a": "NGA",
+      "b": "EGY",
+      "winner": null,
+      "pick": "NGA"
+    },
+    {
+      "round": "R32",
+      "a": "SWE",
+      "b": "WAL",
+      "winner": null,
+      "pick": "SWE"
+    },
+    {
+      "round": "R16",
+      "a": "USA",
+      "b": "CAN",
+      "winner": null,
+      "pick": "USA"
+    },
+    {
+      "round": "R16",
+      "a": "ARG",
+      "b": "ENG",
+      "winner": null,
+      "pick": "ARG"
+    },
+    {
+      "round": "R16",
+      "a": "GER",
+      "b": "NED",
+      "winner": null,
+      "pick": "GER"
+    },
+    {
+      "round": "R16",
+      "a": "BEL",
+      "b": "URU",
+      "winner": null,
+      "pick": "BEL"
+    },
+    {
+      "round": "R16",
+      "a": "JPN",
+      "b": "SEN",
+      "winner": null,
+      "pick": "JPN"
+    },
+    {
+      "round": "R16",
+      "a": "SUI",
+      "b": "POL",
+      "winner": null,
+      "pick": "SUI"
+    },
+    {
+      "round": "R16",
+      "a": "GHA",
+      "b": "ECU",
+      "winner": null,
+      "pick": "GHA"
+    },
+    {
+      "round": "R16",
+      "a": "NGA",
+      "b": "SWE",
+      "winner": null,
+      "pick": "NGA"
+    },
+    {
+      "round": "QF",
+      "a": "USA",
+      "b": "ARG",
+      "winner": null,
+      "pick": "USA"
+    },
+    {
+      "round": "QF",
+      "a": "GER",
+      "b": "BEL",
+      "winner": null,
+      "pick": "GER"
+    },
+    {
+      "round": "QF",
+      "a": "JPN",
+      "b": "SUI",
+      "winner": null,
+      "pick": "JPN"
+    },
+    {
+      "round": "QF",
+      "a": "GHA",
+      "b": "NGA",
+      "winner": null,
+      "pick": "GHA"
+    },
+    {
+      "round": "SF",
+      "a": "USA",
+      "b": "GER",
+      "winner": null,
+      "pick": "USA"
+    },
+    {
+      "round": "SF",
+      "a": "JPN",
+      "b": "GHA",
+      "winner": null,
+      "pick": "JPN"
+    },
+    {
+      "round": "F",
+      "a": "USA",
+      "b": "JPN",
+      "winner": null,
+      "pick": "USA"
+    }
+  ]
+}

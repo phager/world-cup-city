@@ -1,0 +1,89 @@
+:root {
+  --bg: #0f1216;
+  --card: rgba(20, 24, 30, 0.92);
+  --ink: #f2f4f8;
+  --muted: #9aa4b2;
+  --accent: #ffd000;
+  --line: rgba(255, 255, 255, 0.12);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink); background: var(--bg);
+}
+#map { position: fixed; inset: 0; z-index: 0; background: var(--bg); }
+
+/* Floating glass cards over the map */
+.card {
+  position: fixed; z-index: 1000;
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 14px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  padding: 14px;
+}
+#panel { top: 12px; left: 12px; width: 320px; max-width: calc(100vw - 24px); }
+#search-card { top: 12px; right: 12px; width: 300px; max-width: calc(100vw - 24px); }
+
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+h1 { font-size: 17px; margin: 0; letter-spacing: 0.2px; }
+h1 .sub { display: block; font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+#panel-toggle { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; }
+.blurb { color: var(--muted); font-size: 12.5px; margin: 10px 0 12px; }
+.blurb strong { color: var(--ink); }
+
+.row { display: flex; gap: 8px; margin-bottom: 12px; }
+button {
+  font: inherit; font-weight: 600; cursor: pointer;
+  background: var(--accent); color: #1a1300; border: none;
+  border-radius: 9px; padding: 8px 12px;
+}
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+button:disabled { opacity: 0.5; cursor: default; }
+
+.round-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+#round-name { color: var(--ink); font-weight: 600; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+#bracket-details { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+#bracket-details summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+.hint { color: var(--muted); font-size: 11px; margin: 6px 0; }
+#matches { max-height: 38vh; overflow: auto; }
+.match { display: flex; align-items: center; gap: 6px; margin: 4px 0; font-size: 12px; }
+.match .rd { width: 30px; color: var(--muted); flex: none; }
+.match button { flex: 1; padding: 4px 6px; font-weight: 500; text-align: left;
+  background: rgba(255,255,255,0.06); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; }
+.match button.win { outline: 2px solid var(--accent); }
+.match .vs { color: var(--muted); flex: none; }
+
+#search { width: 100%; font: inherit; padding: 9px 11px; border-radius: 9px;
+  border: 1px solid var(--line); background: rgba(255,255,255,0.06); color: var(--ink); }
+#search::placeholder { color: var(--muted); }
+#results { margin-top: 6px; max-height: 40vh; overflow: auto; }
+.result { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; cursor: pointer; }
+.result:hover { background: rgba(255,255,255,0.07); }
+.result .flag { font-size: 16px; }
+.result .st { margin-left: auto; font-size: 10px; color: var(--muted); text-transform: uppercase; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+
+#team-detail { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+#team-detail h3 { margin: 6px 0 4px; font-size: 14px; color: var(--ink); }
+#team-detail a { color: var(--accent); }
+#team-detail ul { margin: 6px 0 0; padding-left: 16px; }
+
+.m-icon { display: flex; align-items: center; justify-content: center; }
+.m-star { font-size: 18px; line-height: 1; text-shadow: 0 0 3px #000, 0 1px 2px #000; }
+.m-dot { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 1.5px rgba(255,255,255,0.85); }
+
+.leaflet-popup-content { font: inherit; }
+.popup b { font-size: 14px; }
+.popup .meta { color: #555; font-size: 12px; }
+.popup a { color: #1268c3; }
+
+.collapsed #panel-body { display: none; }
+
+@media (max-width: 640px) {
+  #panel, #search-card { width: calc(100vw - 24px); }
+  #search-card { top: auto; bottom: 12px; right: 12px; }
+}

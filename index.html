@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>SF World Cup 2026 — Bar Map</title>
+  <meta name="description" content="San Francisco carved into 32 team zones, one per Round-of-32 team. Winners absorb losers until the city is split for the Final." />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "d3-delaunay": "https://esm.sh/d3-delaunay@6.0.4",
+      "polygon-clipping": "https://esm.sh/polygon-clipping@0.15.7",
+      "leaflet": "https://esm.sh/leaflet@1.9.4"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="map"></div>
+
+  <section id="panel" class="card">
+    <header>
+      <h1>World Cup 2026 <span class="sub">SF Bar Bracket</span></h1>
+      <button id="panel-toggle" aria-label="Collapse panel">▾</button>
+    </header>
+    <div id="panel-body">
+      <p class="blurb">
+        Pick a team, find their SF home bar. As the knockout rounds unfold, winning
+        teams <strong>absorb the losing team's zone</strong> — until the city is split
+        in two for the Final.
+      </p>
+
+      <div class="row">
+        <button id="play">▶ Play tournament</button>
+        <button id="reset" class="ghost">Reset</button>
+      </div>
+
+      <label class="round-label">Round: <span id="round-name">Round of 32</span> ·
+        <span id="zone-count"></span></label>
+      <input id="round" type="range" min="0" max="5" step="1" value="0" />
+
+      <details id="bracket-details">
+        <summary>Set results manually</summary>
+        <p class="hint">Click a team to advance them. The map collapses live.</p>
+        <div id="matches"></div>
+      </details>
+    </div>
+  </section>
+
+  <section id="search-card" class="card">
+    <input id="search" type="search" placeholder="Search 48 teams…" autocomplete="off" />
+    <div id="results"></div>
+    <div id="team-detail"></div>
+  </section>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
