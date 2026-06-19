@@ -83,6 +83,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .popup b { font-size: 14px; }
 .popup b a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .popup .meta { color: #555; font-size: 12px; }
+.popup .meta a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .popup a { color: #1268c3; }
 
 .collapsed #panel-body { display: none; }

@@ -95,10 +95,9 @@ function openBarPopup(barId, layer) {
     (h.absorbedRound ? ` in the ${ROUND_LABEL[h.absorbedRound]}` : '') + '.';
   const html =
     `<div class="popup"><b><a href="${listing}" target="_blank" rel="noopener">${b.name}</a></b><br>` +
-    `<span class="meta">${b.hood} · ${b.address}</span><br>` +
+    `<span class="meta"><a href="${dir}" target="_blank" rel="noopener">${b.hood} · ${b.address}</a></span><br>` +
     `<span style="color:${colorOf(code)}">${t?.flag || ''} ${t?.name || code}</span><br>` +
-    `<span class="meta">${story}</span><br>` +
-    `<a href="${dir}" target="_blank" rel="noopener">Directions</a></div>`;
+    `<span class="meta">${story}</span></div>`;
   const popup = L.popup({ maxWidth: 240 }).setLatLng([b.lat, b.lng]).setContent(html);
   map.openPopup(popup);
 }
